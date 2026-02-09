@@ -8,6 +8,7 @@ type Props = {
   onPress: () => void;
   size?: ButtonSize;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 };
 
 export default function CustomButton({
@@ -15,6 +16,7 @@ export default function CustomButton({
   onPress,
   size = 'medium',
   style,
+  disabled = false,
 }: Props) {
   const sizes = {
     small: { paddingVertical: 8, paddingHorizontal: 14 },
