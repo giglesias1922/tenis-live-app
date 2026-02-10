@@ -5,7 +5,7 @@ export interface StartMatchObject
     clubId:number,
     opponentName:string,
     round:string,
-    note:string
+    notes:string
 }
 
 export interface EndMatchObject
@@ -32,7 +32,10 @@ export async function getMatches()
 
 export async function startMatch(data: StartMatchObject)
 {
-    return await api.post("/match");
+    const response =  await api.post("/match",data);
+
+    return response;
+ 
 }
 
 export async function endMatch(id:number,data: EndMatchObject)

@@ -4,6 +4,8 @@ import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import {api} from "../config/api"
+import { Card, Text } from "react-native-paper";
+import * as matchService from "../services/matchService";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -11,7 +13,7 @@ type Props = NativeStackScreenProps<
 >;
 
 export default function HomeScreen({ navigation }: Props) {
-  const [data, setData] = useState<Math>()
+  const [data, setData] = useState<matchService.Match | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -19,9 +21,11 @@ export default function HomeScreen({ navigation }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/match/active");
+        const response = await matchService.getActiveMatch();
         
         setData(response.data);
+
+        console.log(data);
       } catch (error) {
         console.warn(error);
         setError("No se pudieron cargar los datos");
@@ -34,14 +38,13 @@ export default function HomeScreen({ navigation }: Props) {
   }, []);
 
   const onStartMatch = () => {
-    console.log("Empezar partido");
     navigation.navigate("NewMatch");
     // acá llamás a tu API / navegación
   };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {data==null && (
+      {data==null ? (
           <View style={styles.container}>
             <TouchableOpacity onPress={onStartMatch} activeOpacity={0.8}>
               <Image
@@ -49,7 +52,17 @@ export default function HomeScreen({ navigation }: Props) {
                 style={styles.buttonImage}
               />
             </TouchableOpacity>
-          </View>
+            </View>
+      )
+      : (
+        <View style={styles.container}>
+          <Card style={{ margin: 16 }}>
+            <Card.Content>
+              <Text variant="titleLarge">{data?.round}</Text>
+              <Text>{"vs " + data?.opponentName}</Text>
+            </Card.Content>
+          </Card>
+        </View>
       )}
     </View>
   );

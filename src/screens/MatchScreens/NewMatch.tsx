@@ -11,6 +11,7 @@ import CustomButton from "../../components/CustomButton";
 import * as clubService from "../../services/clubService";
 import * as matchService from "../../services/matchService";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+import axios from "axios";
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewMatch">;
 
@@ -24,11 +25,12 @@ type FormData = {
   clubId: number;
   opponentName: string;
   round: string;
-  note: string;
+  notes: string;
 };
 
 export default function NewMatchScreen({ navigation }: Props) {
   const [clubData, setClubData] = useState<Club[]>([]);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     control,
@@ -39,7 +41,7 @@ export default function NewMatchScreen({ navigation }: Props) {
       clubId: undefined,
       opponentName: "",
       round: "",
-      note: "",
+      notes: "",
     },
   });
 
@@ -52,10 +54,33 @@ export default function NewMatchScreen({ navigation }: Props) {
     loadData();
   }, []);
 
+  function mapFormToStartMatch(data: FormData) : matchService.StartMatchObject
+  {
+    return{
+      clubId : data.clubId,
+      opponentName: data.opponentName,
+      round: data.round,
+      notes: data.notes
+    }
+  }
+
   const onSubmit = async (data: FormData) => {
-    console.log("entre");
-    await matchService.startMatch(data);
-    navigation.navigate("Home");
+    try{
+      setServerError(null);
+      await matchService.startMatch(mapFormToStartMatch(data));
+      navigation.navigate("Home");
+    }
+    catch(error)
+    {
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message || "Error del servidor";
+    
+        setServerError(message);
+      } else {
+        setServerError("Error inesperado");
+      }
+    }
   };
 
   return (
@@ -115,7 +140,7 @@ export default function NewMatchScreen({ navigation }: Props) {
       {/* NOTAS */}
       <Controller
         control={control}
-        name="note"
+        name="notes"
         render={({ field: { onChange, value } }) => (
           <CustomInput
             placeholder="Notas"
@@ -142,6 +167,8 @@ export default function NewMatchScreen({ navigation }: Props) {
           style={{ backgroundColor: "gray" }}
         />
       </View>
+
+      <Text>{serverError}</Text>
     </View>
   );
 }
