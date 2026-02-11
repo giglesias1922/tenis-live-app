@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import {api} from "../config/api"
-import { Card, Text } from "react-native-paper";
 import * as matchService from "../services/matchService";
+
+import MatchActions from "../screens/MatchScreens/MatchActions";
+import MatchHeader from "../screens/MatchScreens/MatchHeader";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -43,7 +44,7 @@ export default function HomeScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1 }}>
       {data==null ? (
           <View style={styles.container}>
             <TouchableOpacity onPress={onStartMatch} activeOpacity={0.8}>
@@ -52,16 +53,16 @@ export default function HomeScreen({ navigation }: Props) {
                 style={styles.buttonImage}
               />
             </TouchableOpacity>
-            </View>
+          </View>
       )
       : (
-        <View style={styles.container}>
-          <Card style={{ margin: 16 }}>
-            <Card.Content>
-              <Text variant="titleLarge">{data?.round}</Text>
-              <Text>{"vs " + data?.opponentName}</Text>
-            </Card.Content>
-          </Card>
+        <View style={{ flex: 1 }}>
+
+            <MatchHeader opponentName={data.opponentName} round={data.round} clubName='das'/>
+
+            <View style={{ flex: 1 }}>
+              {/* <MatchActions/> */}
+            </View>
         </View>
       )}
     </View>
@@ -69,10 +70,15 @@ export default function HomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",    
+  },
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center",    
   },
   buttonImage: {
     width: 360,
