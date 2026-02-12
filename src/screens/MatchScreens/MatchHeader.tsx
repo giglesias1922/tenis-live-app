@@ -20,7 +20,7 @@ type MatchHeaderProps = {
         <Card style={styles.card}>
             <Card.Content>
                 <Text variant="titleMedium">{clubName}</Text>
-                <Text variant="titleMedium">Rival: {opponentName}</Text>
+                <Text variant="titleMedium">vs. {opponentName}</Text>
                 <Text variant="bodyMedium">{round}</Text>
             </Card.Content>
         </Card>

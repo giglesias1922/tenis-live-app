@@ -1,123 +1,121 @@
-import { ScrollView, View, StyleSheet } from "react-native";
-import { Card, Text, Button, Divider } from "react-native-paper";
+import React from "react";
+import { View, StyleSheet, Vibration } from "react-native";
+import { Text, Button } from "react-native-paper";
 
 export default function MatchActions() {
+
   const onAction = (type: string) => {
+    Vibration.vibrate(20);
     console.log("Acción:", type);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>  
-      
+    <View style={styles.container}>
 
-      {/* SERVICIO */}
-      <Card style={styles.card}>
-        <Card.Title title="Servicio" />
-        <Card.Content>
+      {/* IZQUIERDA */}
+      <View style={styles.column}>
+
+        <View style={styles.section}>
+          <Text style={styles.title}>SERVICIO</Text>
           <View style={styles.grid}>
-            <Button mode="contained" onPress={() => onAction("FIRST_SERVE_IN")} style={styles.greenBtn}>1st IN</Button>
-            <Button mode="contained" onPress={() => onAction("FIRST_SERVE_OUT")} style={styles.redBtn}>1st OUT</Button>
-            <Button mode="contained" onPress={() => onAction("ACE")} style={styles.greenBtn}>ACE</Button>
-            <Button mode="contained" onPress={() => onAction("DOUBLE_FAULT")} style={styles.redBtn}>DOUBLE</Button>
+            <Button mode="contained" style={styles.greenBtn} onPress={() => onAction("FIRST_SERVE_IN")}>1st IN</Button>
+            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FIRST_SERVE_OUT")}>1st OUT</Button>
+            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("ACE")}>ACE</Button>
+            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("DOUBLE_FAULT")}>DOUBLE</Button>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
 
-      {/* WINNERS */}
-      <Card style={styles.card}>
-        <Card.Title title="Winners" />
-        <Card.Content>
-          <Button
-            mode="contained"
-            onPress={() => onAction("FH_WINNER")}
-            style={styles.fullBtn}
-          >
-            FH WINNER
-          </Button>
-
-          <Button
-            mode="contained"
-            onPress={() => onAction("BH_WINNER")}
-            style={styles.fullBtn}
-          >
-            BH WINNER
-          </Button>
-        </Card.Content>
-      </Card>
-
-      {/* ERRORES */}
-      <Card style={styles.card}>
-        <Card.Title title="Errores" />
-        <Card.Content>
+        <View style={styles.section}>
+          <Text style={styles.title}>WINNERS</Text>
           <View style={styles.grid}>
-            <Button mode="contained" onPress={() => onAction("UNFORCED_FH_ERROR")} style={styles.redBtn}>U FH</Button>
-            <Button mode="contained" onPress={() => onAction("UNFORCED_BH_ERROR")} style={styles.redBtn}>U BH</Button>
-            <Button mode="contained" onPress={() => onAction("FORCED_FH_ERROR")} style={styles.orangeBtn}>F FH</Button>
-            <Button mode="contained" onPress={() => onAction("FORCED_BH_ERROR")} style={styles.orangeBtn}>F BH</Button>
+            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("FH_WINNER")}>DRIVE</Button>
+            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("BH_WINNER")}>REVES</Button>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
 
-      {/* BREAK POINT */}
-      <Card style={styles.card}>
-        <Card.Title title="Break Point" />
-        <Card.Content>
-          <Button
-            mode="contained"
-            onPress={() => onAction("BREAK_POINT_WON")}
-            style={styles.greenBtn}
-          >
-            BP WON
-          </Button>
+      </View>
 
-          <Button
-            mode="contained"
-            onPress={() => onAction("BREAK_POINT_LOST")}
-            style={styles.redBtn}
-          >
-            BP LOST
-          </Button>
-        </Card.Content>
-      </Card>
+      {/* DERECHA */}
+      <View style={styles.column}>
 
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.title}>ERRORES</Text>
+          <View style={styles.grid}>
+            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("UNFORCED_FH_ERROR")}>U DRIVE</Button>
+            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("UNFORCED_BH_ERROR")}>U REVES</Button>
+            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FORCED_FH_ERROR")}>F DRIVE</Button>
+            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FORCED_BH_ERROR")}>F REVES</Button>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.title}>BREAK POINT</Text>
+          <View style={styles.grid}>
+            <Button mode="contained" style={styles.greenBtn} onPress={() => onAction("BREAK_POINT_WON")}>WON</Button>
+            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("BREAK_POINT_LOST")}>LOST</Button>
+          </View>
+        </View>
+
+      </View>
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
-    padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  grid: {
+    flex: 1,
     flexDirection: "row",
+    padding: 10,
+  },
+
+  column: {
+    flex: 1,
+  },
+
+  section: {
+    marginBottom: 12,
+  },
+
+  title: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+
+  grid: {
+    flexDirection: "column",
     flexWrap: "wrap",
-    gap: 10,
+    justifyContent: "space-between",
   },
-  fullBtn: {
-    marginBottom: 10,
-    height: 55,
-  },
+
   greenBtn: {
-    backgroundColor: "#2e7d32",
-    flexBasis: "48%",
-    marginBottom: 10,
+    backgroundColor: "green",
+    width: "90%",
     height: 55,
+    marginBottom: 10,
   },
+
   redBtn: {
     backgroundColor: "#c62828",
-    flexBasis: "48%",
-    marginBottom: 10,
+    width: "90%",
     height: 55,
+    marginBottom: 10,
   },
+
   orangeBtn: {
-    backgroundColor: "#ef6c00",
-    flexBasis: "48%",
-    marginBottom: 10,
+    backgroundColor: "#ffa500",
+    width: "90%",
     height: 55,
+    marginBottom: 10,
   },
+
+  winnerBtn: {
+    backgroundColor: "#4f94d4",
+    width: "90%",
+    height: 55,
+    marginBottom: 10,
+  },
+
 });
-
-
