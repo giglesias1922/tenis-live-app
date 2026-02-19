@@ -27,7 +27,7 @@ export default function EventTypeListScreen({ navigation }: Props) {
         
         const response = await eventTypeService.getEventTypes();
         
-        setData(response.data);
+        setData(response);
       } catch (error) {
         setError("No se pudieron cargar los datos");
       } finally {

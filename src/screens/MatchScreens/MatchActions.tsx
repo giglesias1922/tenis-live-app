@@ -1,63 +1,94 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { View, StyleSheet, Vibration } from "react-native";
 import { Text, Button } from "react-native-paper";
+import * as matchEventService from "../../services/matchEventService"
+import * as eventTypesService from "../../services/eventTypeService"
+import { MatchAction } from "./MatchAction";
 
-export default function MatchActions() {
+type Props = {
+  matchId:number, 
+  setId:number
+}
 
-  const onAction = (type: string) => {
-    Vibration.vibrate(20);
-    console.log("Acción:", type);
-  };
+const MatchActions = ({matchId,setId}:Props) => {
+    const [data, setdata] = useState<eventTypesService.EventTypeRow[]>([])
+
+    const onAction = (eventId: number) => {
+      console.log("Acción:", eventId);
+
+      try{
+        const data:matchEventService.CreateMatchEventInput={
+          matchId: matchId,
+          setId: setId,
+          eventTypeId: eventId
+        };
+
+        matchEventService.CreateMatchEvent(data);
+
+        Vibration.vibrate(20);
+      }
+      catch(error)
+      {
+        console.log(error);
+      }
+
+    };
+
+    useEffect(() => {
+      const load = async() => {
+        try{
+        const response:eventTypesService.EventTypeRow[] = await eventTypesService.getEventTypes();      
+
+        setdata(response);
+        }
+        catch(error)
+        {
+          console.log(error);
+        }
+      };
+
+      load();
+
+    }, [])
+    
+
+    function getFilterData(EventGroup:string):eventTypesService.EventTypeRow[]
+    {
+      return data
+      .filter(e => e.buttonGroup === EventGroup)
+      .sort((a, b) => (a.buttonOrder ?? 0) - (b.buttonOrder ?? 0));
+    }
 
   return (
     <View style={styles.container}>
 
+
       {/* IZQUIERDA */}
       <View style={styles.column}>
-
         <View style={styles.section}>
           <Text style={styles.title}>SERVICIO</Text>
-          <View style={styles.grid}>
-            <Button mode="contained" style={styles.greenBtn} onPress={() => onAction("FIRST_SERVE_IN")}>1st IN</Button>
-            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FIRST_SERVE_OUT")}>1st OUT</Button>
-            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("ACE")}>ACE</Button>
-            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("DOUBLE_FAULT")}>DOUBLE</Button>
-          </View>
+          <MatchAction data= {getFilterData("SERVICE")}  onAction={onAction}></MatchAction>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.title}>WINNERS</Text>
-          <View style={styles.grid}>
-            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("FH_WINNER")}>DRIVE</Button>
-            <Button mode="contained" style={styles.winnerBtn} onPress={() => onAction("BH_WINNER")}>REVES</Button>
-          </View>
+          <MatchAction data= {getFilterData("WINNER")}  onAction={onAction}></MatchAction>
         </View>
 
       </View>
 
       {/* DERECHA */}
       <View style={styles.column}>
-
         <View style={styles.section}>
           <Text style={styles.title}>ERRORES</Text>
-          <View style={styles.grid}>
-            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("UNFORCED_FH_ERROR")}>U DRIVE</Button>
-            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("UNFORCED_BH_ERROR")}>U REVES</Button>
-            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FORCED_FH_ERROR")}>F DRIVE</Button>
-            <Button mode="contained" style={styles.orangeBtn} onPress={() => onAction("FORCED_BH_ERROR")}>F REVES</Button>
-          </View>
+          <MatchAction data= {getFilterData("ERROR")}  onAction={onAction}></MatchAction>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.title}>BREAK POINT</Text>
-          <View style={styles.grid}>
-            <Button mode="contained" style={styles.greenBtn} onPress={() => onAction("BREAK_POINT_WON")}>WON</Button>
-            <Button mode="contained" style={styles.redBtn} onPress={() => onAction("BREAK_POINT_LOST")}>LOST</Button>
-          </View>
+          <MatchAction data= {getFilterData("BREAKPOINT")}  onAction={onAction}></MatchAction>
         </View>
-
       </View>
-
     </View>
   );
 }
@@ -84,38 +115,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  grid: {
-    flexDirection: "column",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
+  
 
-  greenBtn: {
-    backgroundColor: "green",
-    width: "90%",
-    height: 55,
-    marginBottom: 10,
-  },
-
-  redBtn: {
-    backgroundColor: "#c62828",
-    width: "90%",
-    height: 55,
-    marginBottom: 10,
-  },
-
-  orangeBtn: {
-    backgroundColor: "#ffa500",
-    width: "90%",
-    height: 55,
-    marginBottom: 10,
-  },
-
-  winnerBtn: {
-    backgroundColor: "#4f94d4",
-    width: "90%",
-    height: 55,
-    marginBottom: 10,
-  },
-
+  
 });
+
+export default MatchActions;

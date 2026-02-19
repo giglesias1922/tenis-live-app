@@ -1,27 +1,38 @@
 import React from "react";
-import { Card, Text } from "react-native-paper";
+import { Card, Text,Chip  } from "react-native-paper";
 import { ScrollView, View, StyleSheet } from "react-native";
 
 type MatchHeaderProps = {
     clubName: string;
     opponentName: string;
     round: string;
+    startTime: string;
+    currentSetNumber: number|null;
+    currentSetId:number|null;
+    onCloseSet: () => void;
   };
 
-  export default function MatchHeader({
-    clubName,
-    opponentName,
-    round,
-  }: MatchHeaderProps) {
+  export default function MatchHeader(data: MatchHeaderProps) {
 
-    {/* HEADER */}
     return  (       
         
         <Card style={styles.card}>
             <Card.Content>
-                <Text variant="titleMedium">{clubName}</Text>
-                <Text variant="titleMedium">vs. {opponentName}</Text>
-                <Text variant="bodyMedium">{round}</Text>
+            <View style={{flexDirection:"row", justifyContent: "space-between" }}>
+                  <Text variant="titleMedium">{data.clubName}</Text>
+                  <Text variant="bodyMedium">
+                  {new Date(data.startTime)
+                    .toLocaleString("sv-SE")
+                    .slice(0, 16)}
+                </Text>
+                </View>
+                <Text variant="bodyMedium">Ronda: {data.round}</Text>
+
+                <View style={{flexDirection:"row", justifyContent: "space-between" }}>
+                  <Text variant="bodyMedium">vs. {data.opponentName}</Text>                
+                  <Chip icon="close" textStyle={styles.setButton} onPress={data.onCloseSet}>SET: {data.currentSetNumber}</Chip>
+                </View>
+                
             </Card.Content>
         </Card>
     )
@@ -30,5 +41,9 @@ type MatchHeaderProps = {
 const styles = StyleSheet.create({
     card: {
         marginBottom: 16
-      }
+      },
+    setButton:
+    {
+        fontSize:18
+    }
 })

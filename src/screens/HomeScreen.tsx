@@ -5,9 +5,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import * as matchService from "../services/matchService";
 
-import MatchActions from "../screens/MatchScreens/MatchActions";
-import MatchHeader from "../screens/MatchScreens/MatchHeader";
-
 type Props = NativeStackScreenProps<
   RootStackParamList,
   "Home"
@@ -18,30 +15,36 @@ export default function HomeScreen({ navigation }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
-  async function   fetchData ()
-   {
+  const load = async () =>
+  {
     try {
       setError(null);
       setLoading(true);
 
       const response = await matchService.getActiveMatch();
-      
+      console.log(response.data);
+
       setData(response.data);
+
     } catch (error) {
-      console.warn(error);
-      setError("No se pudieron cargar los datos");
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {       
+      load();
+  }, [])
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
+    if( data && !loading)
+      navigation.replace("CurrentMatch", { match: data });
+  }, [data,loading])
+  
+  
   const onStartMatch = () => {
     navigation.navigate("NewMatch");
-    // acá llamás a tu API / navegación
   };
 
   return (
@@ -55,7 +58,7 @@ export default function HomeScreen({ navigation }: Props) {
             No se pudo conectar con el servidor
           </Text>
     
-          <TouchableOpacity onPress={fetchData} style={styles.retryButton}>
+          <TouchableOpacity onPress={load} style={styles.retryButton}>
             <Text style={{ color: "white" }}>Reintentar</Text>
           </TouchableOpacity>
         </View>
@@ -69,27 +72,13 @@ export default function HomeScreen({ navigation }: Props) {
               />
             </TouchableOpacity>
           </View>
-      )
-      : (
-        <View style={{ flex: 1 }}>
-
-            <MatchHeader opponentName={data.opponentName} round={data.round} clubName='das'/>
-
-            <View style={{ flex: 1 }}>
-              <MatchActions/> 
-            </View>
-        </View>
-      )}
+      ) : null
+    }
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",    
-  },
   container: {
     flex: 1,
     justifyContent: "center",

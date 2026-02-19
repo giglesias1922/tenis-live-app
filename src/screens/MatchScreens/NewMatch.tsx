@@ -1,5 +1,5 @@
 // screens/NewMatch.tsx
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -12,6 +12,8 @@ import * as clubService from "../../services/clubService";
 import * as matchService from "../../services/matchService";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import axios from "axios";
+
+import {Text, Switch} from 'react-native-paper'
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewMatch">;
 
@@ -26,6 +28,7 @@ type FormData = {
   opponentName: string;
   round: string;
   notes: string;
+  supertiebreak: boolean;
 };
 
 export default function NewMatchScreen({ navigation }: Props) {
@@ -42,6 +45,7 @@ export default function NewMatchScreen({ navigation }: Props) {
       opponentName: "",
       round: "",
       notes: "",
+      supertiebreak: false
     },
   });
 
@@ -60,7 +64,8 @@ export default function NewMatchScreen({ navigation }: Props) {
       clubId : data.clubId,
       opponentName: data.opponentName,
       round: data.round,
-      notes: data.notes
+      notes: data.notes,
+      supertiebreak: data.supertiebreak,
     }
   }
 
@@ -134,6 +139,24 @@ export default function NewMatchScreen({ navigation }: Props) {
       />
   )}
 />
+
+    {/* SUPERTIEBREAK */}
+      <Controller
+        control={control}
+        name="supertiebreak"
+        render={({ field: { onChange, value } }) => (
+          <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginVertical: 10
+          }}>
+          <Text style={{ marginLeft: 10 }}>SuperTiebreak</Text>
+          <Switch onValueChange={onChange}  value={value}></Switch>
+          </View>
+        )}
+      />
+
 
       
 

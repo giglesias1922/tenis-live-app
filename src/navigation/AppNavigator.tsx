@@ -2,15 +2,18 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import EventTypeListScreen from "../screens/EventTypeListScreen";
+import CurrentMatchScreen from "../screens/MatchScreens/CurrentMatch";
 import EventTypeFormScreen from "../screens/EventTypeFormScreen";
 import NewMatchScreen from "../screens/MatchScreens/NewMatch";
 import { View, Text, Image } from "react-native";
+import * as matchService from "../services/matchService"
 
 export type RootStackParamList = {
   EventTypeList: undefined;
   EventTypeForm: { id?: number };
   Home: undefined;
   NewMatch: undefined;
+  CurrentMatch: {match: matchService.Match}
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +31,7 @@ export default function AppNavigator() {
           <Stack.Screen name="EventTypeList" component={EventTypeListScreen} options={{ title: "Tipos de Evento" }} />
           <Stack.Screen name="EventTypeForm" component={EventTypeFormScreen} options={{ title: "Evento" }} />
           <Stack.Screen name="NewMatch" component={NewMatchScreen} options={{ title: "Nuevo Partido" }} />
+          <Stack.Screen name="CurrentMatch" component={CurrentMatchScreen} options={{ title: "Partido actual" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

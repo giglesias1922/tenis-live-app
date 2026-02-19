@@ -1,9 +1,12 @@
 import axios, { AxiosError } from "axios";
 import { ENV } from "./env";
 
+console.log("API BASE URL:", ENV.API_BASE_URL);
+
+
 export const api = axios.create({
   baseURL: `${ENV.API_BASE_URL}/api`,
-  timeout: 5000,
+  timeout: 15000,
 });
 
 api.interceptors.response.use(

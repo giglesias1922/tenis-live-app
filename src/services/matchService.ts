@@ -5,7 +5,8 @@ export interface StartMatchObject
     clubId:number,
     opponentName:string,
     round:string,
-    notes:string
+    notes:string,
+    supertiebreak:boolean
 }
 
 export interface EndMatchObject
@@ -23,6 +24,10 @@ export interface Match {
     startTime: string;     // ⚠️ siempre string en JSON
     endTime: string | null;
     notes?: string | null;
+    supertiebreak:boolean,
+    clubName:string,
+    currentSetId:number|null,
+    currentSetNumber:number|null
   }
 
 export async function getMatches()
