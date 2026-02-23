@@ -9,6 +9,5 @@ export type CreateMatchEventInput =
 
 export async function CreateMatchEvent (data: CreateMatchEventInput)
 {
-    console.log("Entro");
     return await api.post("/match-event",data);
 }

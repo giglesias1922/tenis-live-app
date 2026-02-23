@@ -1,12 +1,13 @@
 import React,{useEffect} from "react";
 import { useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Text,  } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import CloseSetModal from "../MatchScreens/CloseSetModal";
 import * as setService from "../../services/setService";
 import MatchActions from "../../screens/MatchScreens/MatchActions";
 import MatchHeader from "../../screens/MatchScreens/MatchHeader";
+import axios, { AxiosError } from "axios";
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -14,26 +15,54 @@ type Props = NativeStackScreenProps<
 >;
 
 export default function CurrentMatch({ navigation, route }: Props) {
-    const { match } = route.params;
+    const [currentMatch, setCurrentMatch] = useState(route.params.match);
     const [showModal, setShowModal] = useState(false);
+    const [error,setError] = useState(null);
 
     const handleCloseSet = () => {
         setShowModal(true);
-        console.log("Modal visible:", showModal);
       };
 
-      useEffect(() => {
-        console.log("Modal visible cambió:", showModal);
-      }, [showModal]);
+    const handleConfirmSet = async (myGames: number, opponentGames: number) => {
+      console.log("Resultado:", myGames, opponentGames);
+    try{
+      const data: setService.CloseSetInput = {
+        setId: Number(currentMatch.currentSetId),
+        playerGames:myGames,
+        opponentGames:opponentGames
+      }
+      const response = await setService.closeSet(data)
 
-      const handleConfirmSet = (myGames: number, opponentGames: number) => {
-        console.log("Resultado:", myGames, opponentGames);
+      console.log(response);
+      console.log(response.data);
+
+      const result = response.data;
+
+    if (result.matchFinished) {
+      Alert.alert("Partido finalizado");
       
-        // 👉 acá llamás tu servicio para cerrar set
-        // await matchService.closeSet(match.id, match.currentSetId, myGames, opponentGames)
-      
-        setShowModal(false);
-      };
+      navigation.replace("Home");
+      return;
+    }
+
+    // 🔥 Si sigue abierto, actualizar estado local
+    setCurrentMatch(prev => ({
+      ...prev,
+      currentSetId: result.nextSet.id,
+      currentSetNumber: result.nextSet.setNumber
+    }));
+
+    setShowModal(false);
+  }
+  catch(error)
+  {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error:", error.response?.data);
+    } else {
+      console.log("Unknown error:", error);
+    }
+  }
+    };
       
 
       
@@ -44,7 +73,9 @@ export default function CurrentMatch({ navigation, route }: Props) {
         });
     };
 
-  if (!match) {
+    
+
+  if (!currentMatch) {
     return (
         <View style={{ flex: 1 }}>
         <Text>No hay ningún match activo</Text>
@@ -55,7 +86,7 @@ export default function CurrentMatch({ navigation, route }: Props) {
     );
   }
 
-  if (!match.currentSetId) {
+  if (!currentMatch.currentSetId) {
     return (
     <View style={{ flex: 1 }}>
         <Text>El match no tiene un set activo</Text>
@@ -66,20 +97,23 @@ export default function CurrentMatch({ navigation, route }: Props) {
     );
   }
   
-  <CloseSetModal
-  visible={showModal}
-  onDismiss={() => setShowModal(false)}
-  onConfirm={handleConfirmSet}
-/>
+  
 
   return (    
     <View style={{ flex: 1 }}>
-            <MatchHeader {...match} onCloseSet={handleCloseSet} />
+        <MatchHeader {...currentMatch} onCloseSet={handleCloseSet} />
 
-            <View style={{ flex: 1 }}>
-              <MatchActions matchId={match.id} setId={match.currentSetId}/> 
-            </View>
+        <View style={{ flex: 1 }}>
+          <MatchActions matchId={currentMatch.id} setId={currentMatch.currentSetId}/> 
         </View>
+
+        <CloseSetModal
+          visible={showModal}
+          onDismiss={() => setShowModal(false)}
+          onConfirm={handleConfirmSet}
+        />
+        <Text>{error}</Text>
+    </View>
   );
 
   

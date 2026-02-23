@@ -6,7 +6,7 @@ export type CloseSetInput ={
     opponentGames:number
 }
 
-export async function name(data:CloseSetInput) {
+export async function closeSet(data:CloseSetInput) {
     return await api.put("/set/end/" + data.setId,data);
 
 }
