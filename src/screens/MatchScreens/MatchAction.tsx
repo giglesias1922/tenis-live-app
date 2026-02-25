@@ -1,7 +1,7 @@
 import React from 'react'
 import {View,StyleSheet, Text} from "react-native"
 import * as eventTypesService from "../../services/eventTypeService"
-import { Button } from "react-native-paper";
+import { Button,Surface } from "react-native-paper";
 
 type MatchActionProps = {
     data: eventTypesService.EventTypeRow[];
@@ -10,7 +10,7 @@ type MatchActionProps = {
   
 export const MatchAction = ({data,onAction}:MatchActionProps) => {
   return (
-    <View style={styles.grid}>
+    <Surface style={styles.grid}>
             {data
               .map(e => (
                 
@@ -29,7 +29,7 @@ export const MatchAction = ({data,onAction}:MatchActionProps) => {
                     </Button>
 
               ))}
-    </View>
+    </Surface>
   )
 }
 

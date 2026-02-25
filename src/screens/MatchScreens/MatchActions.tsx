@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from "react";
 import { View, StyleSheet, Vibration } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { Text, Button, Surface } from "react-native-paper";
 import * as matchEventService from "../../services/matchEventService"
 import * as eventTypesService from "../../services/eventTypeService"
 import { MatchAction } from "./MatchAction";
@@ -14,7 +14,6 @@ const MatchActions = ({matchId,setId}:Props) => {
     const [data, setdata] = useState<eventTypesService.EventTypeRow[]>([])
 
     const onAction = (eventId: number) => {
-      console.log("Acción:", eventId);
 
       try{
         const data:matchEventService.CreateMatchEventInput={
@@ -60,36 +59,36 @@ const MatchActions = ({matchId,setId}:Props) => {
     }
 
   return (
-    <View style={styles.container}>
+    <Surface style={styles.container}>
 
 
       {/* IZQUIERDA */}
-      <View style={styles.column}>
-        <View style={styles.section}>
+      <Surface style={styles.column}>
+        <Surface style={styles.section}>
           <Text style={styles.title}>SERVICIO</Text>
           <MatchAction data= {getFilterData("SERVICE")}  onAction={onAction}></MatchAction>
-        </View>
+        </Surface>
 
-        <View style={styles.section}>
+        <Surface style={styles.section}>
           <Text style={styles.title}>WINNERS</Text>
           <MatchAction data= {getFilterData("WINNER")}  onAction={onAction}></MatchAction>
-        </View>
+        </Surface>
 
-      </View>
+      </Surface>
 
       {/* DERECHA */}
-      <View style={styles.column}>
-        <View style={styles.section}>
+      <Surface style={styles.column}>
+        <Surface style={styles.section}>
           <Text style={styles.title}>ERRORES</Text>
           <MatchAction data= {getFilterData("ERROR")}  onAction={onAction}></MatchAction>
-        </View>
+        </Surface>
 
-        <View style={styles.section}>
+        <Surface style={styles.section}>
           <Text style={styles.title}>BREAK POINT</Text>
           <MatchAction data= {getFilterData("BREAKPOINT")}  onAction={onAction}></MatchAction>
-        </View>
-      </View>
-    </View>
+        </Surface>
+      </Surface>
+    </Surface>
   );
 }
 

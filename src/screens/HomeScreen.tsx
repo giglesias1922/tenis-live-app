@@ -1,16 +1,20 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { View, TouchableOpacity, Image, StyleSheet, Text } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Image, StyleSheet, Text } from "react-native";
+import { NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {Button,Surface,TouchableRipple} from "react-native-paper"
 import { RootStackParamList } from "../navigation/AppNavigator";
 import * as matchService from "../services/matchService";
+import { useNavigation } from "@react-navigation/native";
 
-type Props = NativeStackScreenProps<
+
+type HomeNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "Home"
 >;
 
-export default function HomeScreen({ navigation }: Props) {
+export default function HomeScreen() {
+  const navigation = useNavigation<HomeNavigationProp>();
   const [data, setData] = useState<matchService.Match | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -48,33 +52,33 @@ export default function HomeScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <Surface style={{ flex: 1 }}>
       {loading ?(
         <Text>Cargando...</Text>
 
       ) : error ? (
-        <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <Surface style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
           <Text style={{ marginBottom: 10 }}>
             No se pudo conectar con el servidor
           </Text>
     
-          <TouchableOpacity onPress={load} style={styles.retryButton}>
-            <Text style={{ color: "white" }}>Reintentar</Text>
-          </TouchableOpacity>
-        </View>
+          <Button mode="contained" onPress={load}>
+            <Text >Reintentar</Text>
+          </Button>
+        </Surface>
     
       ) : data==null ? (
-          <View style={styles.container}>
-            <TouchableOpacity onPress={onStartMatch} activeOpacity={0.8}>
+          <Surface style={styles.container}>
+            <TouchableRipple onPress={onStartMatch}>
               <Image
                 source={require("../../assets/start-match.png")}
                 style={styles.buttonImage}
               />
-            </TouchableOpacity>
-          </View>
+            </TouchableRipple>
+          </Surface>
       ) : null
     }
-    </View>
+    </Surface>
   );
 }
 
@@ -88,16 +92,5 @@ const styles = StyleSheet.create({
     width: 360,
     height: 260,
     borderRadius: 80, // la mitad → círculo perfecto
-  },
-  retryButton: {
-    backgroundColor: "#2563eb",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    elevation: 3, // sombra Android
-    shadowColor: "#000", // sombra iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
   },
 });

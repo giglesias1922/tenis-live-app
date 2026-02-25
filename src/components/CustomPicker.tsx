@@ -1,8 +1,15 @@
-// components/CustomPicker.tsx
-import { View, Text, TouchableOpacity, Modal } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useState } from "react";
-import { formStyles } from "../styles/formStyles";
+import { useState, useEffect } from "react";
+import { View, FlatList } from "react-native";
+import {
+  TextInput,
+  Modal,
+  Portal,
+  Surface,
+  Text,
+  RadioButton,
+  useTheme,
+  Divider,
+} from "react-native-paper";
 
 type Item = {
   id: number | string;
@@ -11,82 +18,113 @@ type Item = {
 
 type CustomPickerProps = {
   items: Item[];
-  value: number | string | null;
+  value?: number | string | null;
   onChange: (value: number | string | null) => void;
   placeholder?: string;
-  error?: string;
+  error?: string | null;
+  label?: string;
 };
 
 export default function CustomPicker({
   items,
   value,
   onChange,
-  placeholder = "Seleccionar...",
   error,
+  label,
+  placeholder = "Seleccionar",
 }: CustomPickerProps) {
+  const theme = useTheme();
   const [visible, setVisible] = useState(false);
-  const selectedItem = items.find(i => i.id === value);
+
+  const selectedItem = items.find(
+    (i) => i.id.toString() === value?.toString()
+  );
+
+  const handleSelect = (selected: string) => {
+    const parsed =
+      typeof items[0]?.id === "number"
+        ? Number(selected)
+        : selected;
+
+    onChange(parsed);
+    setVisible(false);
+  };
 
   return (
-    <View style={{ marginBottom: 12 }}>
-      {/* Campo touchable */}
-      <TouchableOpacity
-        onPress={() => setVisible(true)}
-        style={[
-          formStyles.field,
-          error && { borderColor: "red", borderWidth: 1 },
-        ]}
-      >
-        <Text style={{ color: selectedItem ? "#000" : "#999" }}>
-          {selectedItem ? selectedItem.label : placeholder}
-        </Text>
-      </TouchableOpacity>
+    <View style={{ marginBottom: 16 }}>
+      <TextInput
+        label={label}
+        mode="outlined"
+        value={selectedItem ? selectedItem.label : ""}
+        placeholder={placeholder}
+        editable={false}
+        onPressIn={() => setVisible(true)}
+        right={<TextInput.Icon icon="chevron-down" />}
+        error={!!error}
+      />
 
-      {/* Error */}
       {error && (
-        <Text style={{ color: "red", marginLeft:3,marginTop: 4, fontSize: 12 }}>
+        <Text
+          style={{
+            color: theme.colors.error,
+            marginTop: 4,
+            marginLeft: 4,
+          }}
+        >
           {error}
         </Text>
       )}
 
-      {/* Modal */}
-      <Modal visible={visible} transparent animationType="slide">
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
-          <View style={{ backgroundColor: "#fff" }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                padding: 12,
-                borderBottomWidth: 1,
-                borderColor: "#eee",
-              }}
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          contentContainerStyle={{
+            margin: 20,
+          }}
+          style={{
+            backgroundColor: theme.colors.backdrop,
+          }}
+        >
+          <Surface
+            style={{
+              paddingVertical: 16,
+              borderRadius: 16,
+              backgroundColor: theme.colors.elevation.level3,
+              elevation: 4,
+            }}
+          >
+            <Text
+              variant="titleMedium"
+              style={{ paddingHorizontal: 20, marginBottom: 12 }}
             >
-              <TouchableOpacity onPress={() => setVisible(false)}>
-                <Text style={{ color: "#007AFF" }}>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setVisible(false)}>
-                <Text style={{ color: "#007AFF", fontWeight: "600" }}>
-                  Aceptar
-                </Text>
-              </TouchableOpacity>
-            </View>
+              Seleccionar
+            </Text>
 
-            <Picker
-              selectedValue={value}
-              onValueChange={v => onChange(v)}
-            >
-              {items.map(i => (
-                <Picker.Item
-                  key={i.id}
-                  label={i.label}
-                  value={i.id}
+            <Divider />
+
+            <FlatList
+              data={items}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <RadioButton.Item
+                  label={item.label}
+                  value={item.id.toString()}
+                  status={
+                    item.id.toString() === value?.toString()
+                      ? "checked"
+                      : "unchecked"
+                  }
+                  onPress={() =>
+                    handleSelect(item.id.toString())
+                  }
                 />
-              ))}
-            </Picker>
-          </View>
-        </View>
-      </Modal>
+              )}
+              style={{ maxHeight: 350 }}
+            />
+          </Surface>
+        </Modal>
+      </Portal>
     </View>
   );
 }

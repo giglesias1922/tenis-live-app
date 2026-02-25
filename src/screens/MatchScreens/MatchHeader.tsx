@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Text,Chip  } from "react-native-paper";
+import { Card, Text,Chip,Surface  } from "react-native-paper";
 import { ScrollView, View, StyleSheet } from "react-native";
 
 type MatchHeaderProps = {
@@ -18,20 +18,20 @@ type MatchHeaderProps = {
         
         <Card style={styles.card}>
             <Card.Content>
-            <View style={{flexDirection:"row", justifyContent: "space-between" }}>
+            <Surface style={{flexDirection:"row", justifyContent: "space-between" }}>
                   <Text variant="titleMedium">{data.clubName}</Text>
                   <Text variant="bodyMedium">
                   {new Date(data.startTime)
                     .toLocaleString("sv-SE")
                     .slice(0, 16)}
                 </Text>
-                </View>
+                </Surface>
                 <Text variant="bodyMedium">Ronda: {data.round}</Text>
 
-                <View style={{flexDirection:"row", justifyContent: "space-between" }}>
+                <Surface style={{flexDirection:"row", justifyContent: "space-between" }}>
                   <Text variant="bodyMedium">vs. {data.opponentName}</Text>                
                   <Chip icon="close" textStyle={styles.setButton} onPress={data.onCloseSet}>SET: {data.currentSetNumber}</Chip>
-                </View>
+                </Surface>
                 
             </Card.Content>
         </Card>

@@ -1,19 +1,15 @@
 // screens/NewMatch.tsx
-import { View } from "react-native";
+import {Button, Surface,TextInput,useTheme,Switch, Text,Menu} from "react-native-paper"
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import CustomPicker from "../../components/CustomPicker";
-import CustomInput from "../../components/CustomInput";
-import CustomButton from "../../components/CustomButton";
 
 import * as clubService from "../../services/clubService";
 import * as matchService from "../../services/matchService";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import axios from "axios";
-
-import {Text, Switch} from 'react-native-paper'
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewMatch">;
 
@@ -32,9 +28,11 @@ type FormData = {
 };
 
 export default function NewMatchScreen({ navigation }: Props) {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const theme = useTheme();
   const [clubData, setClubData] = useState<Club[]>([]);
   const [serverError, setServerError] = useState<string | null>(null);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     control,
     handleSubmit,
@@ -89,8 +87,9 @@ export default function NewMatchScreen({ navigation }: Props) {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      
+    <Surface style={{ flex: 1, padding: 16 }}>
+      <Text variant="headlineSmall">Nuevo Partido</Text>
+
       {/* CLUB */}
       <Controller
         control={control}
@@ -100,12 +99,12 @@ export default function NewMatchScreen({ navigation }: Props) {
           <CustomPicker
             items={clubData.map(c => ({
               id: c.id,
-              label: `${c.name} - ${c.city}`,
+              label: `${c.name} - ${c.city}`
             }))}
             value={value}
-            onChange={v => onChange(Number(v))}
-            placeholder="Seleccionar club"
-            error= {errors.clubId?.message}
+            onChange={onChange}
+            label="Club"
+            error={errors.clubId?.message}
           />
         )}
       />
@@ -114,84 +113,71 @@ export default function NewMatchScreen({ navigation }: Props) {
       <Controller
         control={control}
         name="opponentName"
-        rules={{ required: "El oponente es obligatorio" }}
+        rules={{ required: "El rival es obligatorio" }}
         render={({ field: { onChange, value } }) => (
-          <CustomInput
-            placeholder="Oponente"
-            value={value}
-            onChangeText={onChange}
-            error={errors.opponentName?.message}
-          />
-        )}
+          <>
+            <TextInput label="Rival" mode="outlined" onChangeText={onChange} value={value} error={!!errors.opponentName}></TextInput>
+            {errors.opponentName && ( <Text style={{color: theme.colors.error }}>{errors.opponentName.message}</Text> )}
+          </>
+        )}        
       />
 
       {/* RONDA */}
       <Controller
-  control={control}
-  name="round"
-  rules={{ required: "La ronda es obligatoria" }}
-  render={({ field: { onChange, value } }) => (
-      <CustomInput
-        placeholder="Ronda"
-        value={value}
-        onChangeText={onChange}
-        error={errors.round?.message}
+          control={control}
+          name="round"
+          rules={{ required: "La ronda es obligatoria" }}
+          render={({ field: { onChange, value } }) => (
+              <>
+                <TextInput label="Ronda" mode="outlined" onChangeText={onChange} value={value} error={!!errors.round}></TextInput>
+                {errors.round && ( <Text style={{color: theme.colors.error }}>{errors.round.message}</Text> )}
+              </>
+            )}
       />
-  )}
-/>
 
     {/* SUPERTIEBREAK */}
       <Controller
         control={control}
         name="supertiebreak"
         render={({ field: { onChange, value } }) => (
-          <View style={{
+          <Surface style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
             marginVertical: 10
           }}>
-          <Text style={{ marginLeft: 10 }}>SuperTiebreak</Text>
+            <Text variant="bodyMedium">SuperTiebreak</Text>
           <Switch onValueChange={onChange}  value={value}></Switch>
-          </View>
+          </Surface>
         )}
       />
 
-
-      
 
       {/* NOTAS */}
       <Controller
         control={control}
         name="notes"
         render={({ field: { onChange, value } }) => (
-          <CustomInput
-            placeholder="Notas"
-            multiline
-            numberOfLines={4}
-            style={{ minHeight: 150 }}
-            value={value}
-            onChangeText={onChange}
-          />
+          <>
+            <TextInput label="Notas" mode="outlined" onChangeText={onChange} value={value}  multiline={true} numberOfLines={4} style={{height:150}}></TextInput>
+          </>          
         )}        
       />
 
-      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 20 }}>
-        <CustomButton
-          title="Guardar"
-          onPress={handleSubmit(onSubmit)}
-          disabled={isSubmitting}
-          style={{ marginRight: 40 }}
-        />
+      <Surface style={{ flexDirection: "row", justifyContent:"space-between", marginTop: 20 }}>        
+        <Button mode="text"
+        onPress={() => navigation.navigate("Home")}
+        disabled={isLoading}
+        >Cancelar</Button>
 
-        <CustomButton
-          title="Cancelar"
-          onPress={() => navigation.navigate("Home")}
-          style={{ backgroundColor: "gray" }}
-        />
-      </View>
+        <Button mode="contained"
+        onPress={() => {setIsLoading(true)}}
+        loading={isLoading}
+        disabled={isLoading}
+        >Crear</Button>
+      </Surface>
 
       <Text>{serverError}</Text>
-    </View>
+    </Surface>
   );
 }

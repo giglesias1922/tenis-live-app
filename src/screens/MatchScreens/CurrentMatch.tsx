@@ -1,6 +1,7 @@
 import React,{useEffect} from "react";
 import { useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
+import {Surface} from "react-native-paper"
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import CloseSetModal from "../MatchScreens/CloseSetModal";
@@ -17,7 +18,8 @@ type Props = NativeStackScreenProps<
 export default function CurrentMatch({ navigation, route }: Props) {
     const [currentMatch, setCurrentMatch] = useState(route.params.match);
     const [showModal, setShowModal] = useState(false);
-    const [error,setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState<string|null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const handleCloseSet = () => {
         setShowModal(true);
@@ -25,6 +27,8 @@ export default function CurrentMatch({ navigation, route }: Props) {
 
     const handleConfirmSet = async (myGames: number, opponentGames: number) => {
       console.log("Resultado:", myGames, opponentGames);
+      setErrorMessage(null);
+      setIsLoading(true);
     try{
       const data: setService.CloseSetInput = {
         setId: Number(currentMatch.currentSetId),
@@ -54,13 +58,19 @@ export default function CurrentMatch({ navigation, route }: Props) {
 
     setShowModal(false);
   }
-  catch(error)
-  {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error:", error.response?.data);
+  catch (error: unknown) {
+    if (axios.isAxiosError<{ message: string }>(error)) {
+      setErrorMessage(
+        error.response?.data?.message || "Error inesperado"
+      );
+    } else if (error instanceof Error) {
+      setErrorMessage(error.message);
     } else {
-      console.log("Unknown error:", error);
+      setErrorMessage("Error inesperado");
     }
+  }
+  finally{
+    setIsLoading(false);
   }
     };
       
@@ -77,43 +87,48 @@ export default function CurrentMatch({ navigation, route }: Props) {
 
   if (!currentMatch) {
     return (
-        <View style={{ flex: 1 }}>
+        <Surface style={{ flex: 1 }}>
         <Text>No hay ningún match activo</Text>
         <TouchableOpacity onPress={goHome} style={styles.retryButton}>
           <Text style={{ color: "white" }}>Volver</Text>
         </TouchableOpacity>
-      </View>
+      </Surface>
     );
   }
 
   if (!currentMatch.currentSetId) {
     return (
-    <View style={{ flex: 1 }}>
+    <Surface style={{ flex: 1 }}>
         <Text>El match no tiene un set activo</Text>
         <TouchableOpacity onPress={goHome} style={styles.retryButton}>
           <Text style={{ color: "white" }}>Volver</Text>
         </TouchableOpacity>
-      </View>
+      </Surface>
     );
   }
   
   
 
   return (    
-    <View style={{ flex: 1 }}>
+    <Surface style={{ flex: 1 }}>
         <MatchHeader {...currentMatch} onCloseSet={handleCloseSet} />
 
-        <View style={{ flex: 1 }}>
+        <Surface style={{ flex: 1 }}>
           <MatchActions matchId={currentMatch.id} setId={currentMatch.currentSetId}/> 
-        </View>
+        </Surface>
 
         <CloseSetModal
           visible={showModal}
-          onDismiss={() => setShowModal(false)}
-          onConfirm={handleConfirmSet}
-        />
-        <Text>{error}</Text>
-    </View>
+          onDismiss={() => {
+            setShowModal(false);
+            setErrorMessage(null);
+          }}
+          onConfirm={handleConfirmSet} 
+          errorMessage={errorMessage}
+          isLoading={isLoading}
+        />        
+        
+    </Surface>
   );
 
   

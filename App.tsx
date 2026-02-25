@@ -1,9 +1,9 @@
 
 import AppNavigator from "./src/navigation/AppNavigator";
-import { Provider as PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 
 export default function App() {
-  return <PaperProvider>
+  return <PaperProvider theme={MD3DarkTheme}>
       <AppNavigator />
   </PaperProvider>
 }
