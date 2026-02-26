@@ -1,6 +1,6 @@
 import {api} from "../config/api"
 
-export interface StartMatchObject
+export type StartMatchObject =
 {
     clubId:number,
     opponentName:string,
@@ -9,14 +9,35 @@ export interface StartMatchObject
     supertiebreak:boolean
 }
 
-export interface EndMatchObject
+export type EndMatchObject =
 {
     matchId:number,
     won:boolean,
     notes:string
 }
 
-export interface Match {
+export type SetClosed =
+    {
+        setNumber:number,
+        playerGames:number,
+        opponentGames:number,
+        won:boolean
+    }
+
+export type MatchClosed =
+{
+    matchId:number,
+    clubName:string,
+    opponentName: string,
+    round:string|null,
+    startTime:Date,
+    endTime:Date|null,
+    won:boolean|null,
+    sets: SetClosed[]
+
+}
+
+export type Match = {
     id: number;
     clubId: number;
     opponentName: string;
@@ -51,4 +72,11 @@ export async function endMatch(id:number,data: EndMatchObject)
 export async function getActiveMatch()
 {
     return await api.get<Match|null>("/match/active");
+}
+
+
+export async function getClosed():Promise<MatchClosed[]>
+{
+    const response = await api.get<MatchClosed[]>("/match/closed");
+    return response.data;
 }

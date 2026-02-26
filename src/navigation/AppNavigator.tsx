@@ -4,7 +4,8 @@ import EventTypeListScreen from "../screens/EventTypeListScreen";
 import CurrentMatchScreen from "../screens/MatchScreens/CurrentMatch";
 import EventTypeFormScreen from "../screens/EventTypeFormScreen";
 import NewMatchScreen from "../screens/MatchScreens/NewMatch";
-import StatisticsScreen from "../screens/StatisticsScreen";
+import SummaryHeaderScreen from "../screens/Summary/SummaryHeaderScreen";
+import SummaryDetailScreen from "../screens/Summary/SummaryDetailScreen";
 import { View, Text, Image } from "react-native";
 import * as matchService from "../services/matchService"
 import BottomTab from "./BottomTab";
@@ -15,7 +16,8 @@ export type RootStackParamList = {
   Home: undefined;
   NewMatch: undefined;
   CurrentMatch: {match: matchService.Match};
-  Statistics: undefined;
+  SummaryList: undefined;
+  SummaryDetail: { matchId: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,7 +44,8 @@ export default function AppNavigator() {
           <Stack.Screen name="EventTypeForm" component={EventTypeFormScreen} options={{ title: "Evento" }} />
           <Stack.Screen name="NewMatch" component={NewMatchScreen} options={{ title: "Nuevo Partido" }} />
           <Stack.Screen name="CurrentMatch" component={CurrentMatchScreen} options={{ title: "Partido actual" }} />
-          <Stack.Screen name="Statistics" component={StatisticsScreen} options={{ title: "Estadísticas" }} />
+          <Stack.Screen name="SummaryList" component={SummaryHeaderScreen} options={{ title: "Estadísticas" }} />
+          <Stack.Screen name="SummaryDetail" component={SummaryDetailScreen} options={{ title: "Estadísticas Resumen" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

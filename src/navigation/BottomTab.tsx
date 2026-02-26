@@ -3,11 +3,11 @@ import { useTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/HomeScreen";
-import StatisticsScreen from "../screens/StatisticsScreen";
+import SummaryHeaderScreen from "../screens/Summary/SummaryHeaderScreen";
 
 export type BottomTabParamList = {
   HomeMain: undefined;
-  StatisticsMain: undefined;
+  SummaryMain: undefined;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -49,9 +49,9 @@ export default function BottomTab() {
         options={{ title: "Home" }}
       />
       <Tab.Screen
-        name="StatisticsMain"
-        component={StatisticsScreen}
-        options={{ title: "Statistics" }}
+        name="SummaryMain"
+        component={SummaryHeaderScreen}
+        options={{ title: "Resumen" }}
       />
     </Tab.Navigator>
   );
