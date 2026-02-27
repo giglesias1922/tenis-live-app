@@ -1,12 +1,13 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {Button,Surface,TouchableRipple} from "react-native-paper"
+import {Button,Surface,TouchableRipple, Text, useTheme} from "react-native-paper"
 import { RootStackParamList } from "../navigation/AppNavigator";
 import * as matchService from "../services/matchService";
 import { useNavigation } from "@react-navigation/native";
-
+import theme from 'axios';
+import getErrorMessage from "../helpers/ErrorHelper"
 
 type HomeNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -30,8 +31,11 @@ export default function HomeScreen() {
 
       setData(response.data);
 
-    } catch (error) {
-      console.log(error);
+    } catch (error:unknown) 
+    {
+      const errorMessage = getErrorMessage(error);
+      setError(errorMessage);
+      console.log(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -63,7 +67,7 @@ export default function HomeScreen() {
           </Text>
     
           <Button mode="contained" onPress={load}>
-            <Text >Reintentar</Text>
+            Reintentar
           </Button>
         </Surface>
     
