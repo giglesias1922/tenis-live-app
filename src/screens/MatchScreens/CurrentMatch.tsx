@@ -9,6 +9,7 @@ import * as setService from "../../services/setService";
 import MatchActions from "../../screens/MatchScreens/MatchActions";
 import MatchHeader from "../../screens/MatchScreens/MatchHeader";
 import axios, { AxiosError } from "axios";
+import * as errorHelper from "../../helpers/ErrorHelper"
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -37,9 +38,6 @@ export default function CurrentMatch({ navigation, route }: Props) {
       }
       const response = await setService.closeSet(data)
 
-      console.log(response);
-      console.log(response.data);
-
       const result = response.data;
 
     if (result.matchFinished) {
@@ -59,15 +57,7 @@ export default function CurrentMatch({ navigation, route }: Props) {
     setShowModal(false);
   }
   catch (error: unknown) {
-    if (axios.isAxiosError<{ message: string }>(error)) {
-      setErrorMessage(
-        error.response?.data?.message || "Error inesperado"
-      );
-    } else if (error instanceof Error) {
-      setErrorMessage(error.message);
-    } else {
-      setErrorMessage("Error inesperado");
-    }
+    const message = errorHelper.getErrorMessage(error);
   }
   finally{
     setIsLoading(false);

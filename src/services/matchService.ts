@@ -80,3 +80,9 @@ export async function getClosed():Promise<MatchClosed[]>
     const response = await api.get<MatchClosed[]>("/match/closed");
     return response.data;
 }
+
+export async function getMatch(matchId:number):Promise<Match>
+{
+    const response = await api.get<Match>("/match/" + matchId);
+    return response.data;
+}

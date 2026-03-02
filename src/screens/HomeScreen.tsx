@@ -1,13 +1,13 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { Image, StyleSheet } from "react-native";
+import { ImageBackground , StyleSheet } from "react-native";
 import { NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {Button,Surface,TouchableRipple, Text, useTheme} from "react-native-paper"
+import {Button,Surface,ActivityIndicator, Text} from "react-native-paper"
 import { RootStackParamList } from "../navigation/AppNavigator";
 import * as matchService from "../services/matchService";
 import { useNavigation } from "@react-navigation/native";
-import theme from 'axios';
-import getErrorMessage from "../helpers/ErrorHelper"
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {getErrorMessage} from "../helpers/ErrorHelper"
 
 type HomeNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -27,7 +27,6 @@ export default function HomeScreen() {
       setLoading(true);
 
       const response = await matchService.getActiveMatch();
-      console.log(response.data);
 
       setData(response.data);
 
@@ -35,7 +34,7 @@ export default function HomeScreen() {
     {
       const errorMessage = getErrorMessage(error);
       setError(errorMessage);
-      console.log(errorMessage);
+      
     } finally {
       setLoading(false);
     }
@@ -55,12 +54,20 @@ export default function HomeScreen() {
     navigation.navigate("NewMatch");
   };
 
-  return (
-    <Surface style={{ flex: 1 }}>
-      {loading ?(
-        <Text>Cargando...</Text>
+  if(loading)
+  {
+    return (
+    <ActivityIndicator
+        animating={true}
+        size="large"
+        style={{ marginTop: 40 }}
+    />    
+    )
+  }
 
-      ) : error ? (
+  if(error)
+  {
+    return(
         <Surface style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
           <Text style={{ marginBottom: 10 }}>
             No se pudo conectar con el servidor
@@ -69,32 +76,59 @@ export default function HomeScreen() {
           <Button mode="contained" onPress={load}>
             Reintentar
           </Button>
+        </Surface>    
+        )
+  }
+  
+  if(data==null){
+    return (
+        <ImageBackground
+        source={require("../../assets/home-background.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <Surface style={[styles.container, {paddingBottom:100}]}>
+            <Button
+                mode="contained"
+                icon={() => (
+                  <MaterialCommunityIcons name="play" size={28} />
+                )}
+                onPress={onStartMatch}
+                style={styles.startButton}
+              >
+                Iniciar Partido
+            </Button>
         </Surface>
-    
-      ) : data==null ? (
-          <Surface style={styles.container}>
-            <TouchableRipple onPress={onStartMatch}>
-              <Image
-                source={require("../../assets/start-match.png")}
-                style={styles.buttonImage}
-              />
-            </TouchableRipple>
-          </Surface>
-      ) : null
+      </ImageBackground>
+      )
     }
-    </Surface>
-  );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",    
+    alignItems: "center",
   },
-  buttonImage: {
-    width: 360,
-    height: 260,
-    borderRadius: 80, // la mitad → círculo perfecto
+
+  container: {
+    flex:1,
+    backgroundColor: "transparent",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
+
+  startButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 40,
+    elevation: 4,
+  },
+
+  startText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+
 });

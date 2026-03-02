@@ -11,6 +11,7 @@ export type CreateMatchEventInput =
 
 export type  MatchSummary =
 {
+    buttonGroup: string,
     event:string,
     count:number
 }

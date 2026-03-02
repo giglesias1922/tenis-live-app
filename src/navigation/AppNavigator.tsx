@@ -17,7 +17,7 @@ export type RootStackParamList = {
   NewMatch: undefined;
   CurrentMatch: {match: matchService.Match};
   SummaryList: undefined;
-  SummaryDetail: { matchId: number };
+  SummaryDetail: { match: matchService.MatchClosed};
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,12 +34,7 @@ export default function AppNavigator() {
         
           {/* <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} /> */}
 
-          <Stack.Screen
-  name="Home"
-  component={BottomTab}
-  options={{ headerShown: true }}
-/>
-
+          <Stack.Screen name="Home" component={BottomTab} options={{ headerShown: true }} />
           <Stack.Screen name="EventTypeList" component={EventTypeListScreen} options={{ title: "Tipos de Evento" }} />
           <Stack.Screen name="EventTypeForm" component={EventTypeFormScreen} options={{ title: "Evento" }} />
           <Stack.Screen name="NewMatch" component={NewMatchScreen} options={{ title: "Nuevo Partido" }} />
