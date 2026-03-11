@@ -1,24 +1,30 @@
-import { Surface, Text,ActivityIndicator ,Searchbar  } from 'react-native-paper'
+import { Surface, Text,ActivityIndicator ,Button  } from 'react-native-paper'
 import React,{useState,useEffect} from 'react'
 import * as matchService from "../../services/matchService"
+import * as clubService from "../../services/clubService"
 import {FlatList, View} from "react-native"
 import SummaryCard from "./SummaryCard"
 import { useNavigation } from "@react-navigation/native"; 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import {getErrorMessage} from "../../helpers/ErrorHelper"
+import SummaryFilter from './SummaryFilter'
+import {Club} from "../../models/Club"
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "SummaryList"
 >;
 
+
+  
 export default function SummaryHeaderScreen() {
     const [data, setData] = useState<matchService.MatchClosed[]>([])
     const navigation = useNavigation<NavigationProp>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string|null>(null)
-    const [searchQuery, setSearchQuery] = React.useState('');
+    const [showFilter, setShowFilter] = React.useState(false);
+    const [clubData, setClubData] = useState<Club[]>([]);
 
     useEffect(() => {
         try{
@@ -30,6 +36,9 @@ export default function SummaryHeaderScreen() {
                 const response:matchService.MatchClosed[]  = await matchService.getClosed();
 
                 setData(response);
+
+                const responseClub = await clubService.getClubes();
+                setClubData(responseClub.data);
             };
 
             loadData();
@@ -44,6 +53,11 @@ export default function SummaryHeaderScreen() {
             setLoading(false);
         }
     }, [])
+
+    function SearchFilter()
+    {
+        console.log("Buscas");
+    }
         
     function onPress(match: matchService.MatchClosed) {
         navigation.navigate("SummaryDetail", { match });
@@ -51,8 +65,6 @@ export default function SummaryHeaderScreen() {
 
     return (
         <Surface style={{flex:1}}>
-
-        <Text variant="titleLarge" style={{marginTop:12, textAlign:"center"}}>Estadísticas</Text>
 
         {loading ? (
             <ActivityIndicator
@@ -67,12 +79,16 @@ export default function SummaryHeaderScreen() {
                 </Text>
           </View>
         ) : (
+            
             <View style={{margin:20}}>
-                    <Searchbar
-                    placeholder="Search"
-                    onChangeText={setSearchQuery}
-                    value={searchQuery}                                        
-                    />
+                <Button
+                    icon="filter"
+                    mode="outlined"
+                    onPress={() => setShowFilter(true)}
+                    >
+                    Filter
+                </Button>
+                    
             <View style={{margin:20,width:"100%"}}>
                 <FlatList
                     data={data}
@@ -85,6 +101,15 @@ export default function SummaryHeaderScreen() {
             </View>
         )}
 
+        <SummaryFilter 
+            visible={showFilter} 
+            onConfirm={SearchFilter} 
+            onDismiss={()=>setShowFilter(false)}
+            clubData={clubData}
+            ></SummaryFilter>
+
         </Surface>
+
+        
     )
 }

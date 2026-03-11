@@ -66,12 +66,6 @@ export default function SummaryDetailScreen({ route }: Props) {
 
       <ScrollView contentContainerStyle={{ padding: 16, width:"100%" }}>
 
-        <Text
-          variant="titleLarge"
-          style={{ marginBottom: 12, textAlign: "center" }}
-        >
-          Estadística del Partido
-        </Text>
 
         <View style={{margin:20,width:"100%"}}>
         {/* Tarjeta del partido */}

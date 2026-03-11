@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import HomeScreen from "../screens/HomeScreen";
-import SummaryHeaderScreen from "../screens/Summary/SummaryHeaderScreen";
+import HomeStackNavigator from "../navigation/HomeStackNavigator";
+import SummaryStackNavigator from "./SummaryStackNavigator";
 
 export type BottomTabParamList = {
   HomeMain: undefined;
@@ -45,12 +45,12 @@ export default function BottomTab() {
     >
       <Tab.Screen
         name="HomeMain"
-        component={HomeScreen}
+        component={HomeStackNavigator}
         options={{ title: "Home" }}
       />
       <Tab.Screen
         name="SummaryMain"
-        component={SummaryHeaderScreen}
+        component={SummaryStackNavigator}
         options={{ title: "Resumen" }}
       />
     </Tab.Navigator>

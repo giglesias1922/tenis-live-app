@@ -69,9 +69,10 @@ export default function CloseSetModal({
       <Modal
         visible={visible}
         onDismiss={isLoading ? () => {} : onDismiss}
+        style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         contentContainerStyle={[
           styles.container,
-          { backgroundColor: theme.colors.elevation.level3 }
+          { backgroundColor: theme.colors.surfaceVariant }
         ]}
 >
         <Text

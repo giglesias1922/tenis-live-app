@@ -28,7 +28,8 @@ export default function AppNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerTitle: () => <HeaderTitle />,
-          headerTitleAlign: "left",
+          headerTitleAlign: "left"
+                  
         }}
       >
         
@@ -39,8 +40,6 @@ export default function AppNavigator() {
           <Stack.Screen name="EventTypeForm" component={EventTypeFormScreen} options={{ title: "Evento" }} />
           <Stack.Screen name="NewMatch" component={NewMatchScreen} options={{ title: "Nuevo Partido" }} />
           <Stack.Screen name="CurrentMatch" component={CurrentMatchScreen} options={{ title: "Partido actual" }} />
-          <Stack.Screen name="SummaryList" component={SummaryHeaderScreen} options={{ title: "Estadísticas" }} />
-          <Stack.Screen name="SummaryDetail" component={SummaryDetailScreen} options={{ title: "Estadísticas Resumen" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
