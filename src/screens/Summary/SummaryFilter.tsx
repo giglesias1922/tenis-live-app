@@ -4,15 +4,16 @@ import {View, StyleSheet} from "react-native"
 import CustomDatePicker from '../../components/CustomDatePicker';
 import CustomPicker from "../../components/CustomPicker"
 import {Club} from "../../models/Club"
+import {ClosedMatchFilter} from "../../models/ClosedMatchFilter"
 
 type Props ={
     visible:boolean,
-    onConfirm: () => void,
     onDismiss: () => void,
-    clubData:Club[]
+    clubData:Club[],
+    setFilterData:(filter:ClosedMatchFilter) => void,
 }
 
-export default function SummaryFilter({visible, onDismiss, clubData}:Props) {
+export default function SummaryFilter({visible, onDismiss, clubData, setFilterData}:Props) {
   const [date, setDate] = useState<Date | undefined>();
   const theme = useTheme();
   const [selectedClub, setSelectedClub] = useState<number | string | null>();
@@ -25,6 +26,35 @@ export default function SummaryFilter({visible, onDismiss, clubData}:Props) {
       borderRadius: 28,
     }
   });
+
+  function setFilter () 
+  {
+    const filter: ClosedMatchFilter = 
+    {
+      clubId: selectedClub ? Number(selectedClub) : undefined,
+      fromDate: date,
+      opponent: rival
+    }
+
+    setFilterData(filter);
+
+    onDismiss();
+
+  }
+
+  function clearFilter () 
+  {
+    const filter: ClosedMatchFilter = 
+    {
+      clubId: undefined,
+      fromDate: undefined,
+      opponent: undefined
+    }
+
+    setFilterData(filter);
+
+    onDismiss();
+  }
 
   return (
       <Portal>
@@ -61,11 +91,11 @@ export default function SummaryFilter({visible, onDismiss, clubData}:Props) {
               
             <View style={{ flexDirection: "row", justifyContent:"space-between", marginTop: 20 }}>        
           <Button mode="text"
-          onPress={()=>console.log("limpiar filtrar")}
+          onPress={clearFilter}
           >Limpiar Filtros</Button>
 
           <Button mode="contained"
-          onPress={()=>console.log("filtrar")}
+          onPress={setFilter}
           >Filtrar</Button>
         </View>
             </View>

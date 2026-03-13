@@ -10,6 +10,7 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 import {getErrorMessage} from "../../helpers/ErrorHelper"
 import SummaryFilter from './SummaryFilter'
 import {Club} from "../../models/Club"
+import {ClosedMatchFilter} from "../../models/ClosedMatchFilter"
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -25,39 +26,36 @@ export default function SummaryHeaderScreen() {
     const [error, setError] = useState<string|null>(null)
     const [showFilter, setShowFilter] = React.useState(false);
     const [clubData, setClubData] = useState<Club[]>([]);
+    const [filterData, setFilterData] = useState<ClosedMatchFilter>({clubId:undefined,fromDate:undefined,opponent:undefined });
 
     useEffect(() => {
-        try{
-            
-            const loadData = async()=>{
+
+        const loadData = async () => {
+            try {
+    
                 setError(null);
                 setLoading(true);
-
-                const response:matchService.MatchClosed[]  = await matchService.getClosed();
-
+    
+                const response = await matchService.getClosed(filterData);
                 setData(response);
-
+    
                 const responseClub = await clubService.getClubes();
                 setClubData(responseClub.data);
-            };
-
-            loadData();
-        } 
-        catch(error:unknown)
-        {
-            setError(getErrorMessage(error));
-            console.log(error);
-        }
-        finally
-        {
-            setLoading(false);
-        }
-    }, [])
-
-    function SearchFilter()
-    {
-        console.log("Buscas");
-    }
+    
+            } catch (error: unknown) {
+    
+                setError(getErrorMessage(error));
+    
+            } finally {
+    
+                setLoading(false);
+    
+            }
+        };
+    
+        loadData();
+    
+    }, [filterData]);
         
     function onPress(match: matchService.MatchClosed) {
         navigation.navigate("SummaryDetail", { match });
@@ -102,10 +100,10 @@ export default function SummaryHeaderScreen() {
         )}
 
         <SummaryFilter 
-            visible={showFilter} 
-            onConfirm={SearchFilter} 
+            visible={showFilter}  
             onDismiss={()=>setShowFilter(false)}
             clubData={clubData}
+            setFilterData={setFilterData}
             ></SummaryFilter>
 
         </Surface>

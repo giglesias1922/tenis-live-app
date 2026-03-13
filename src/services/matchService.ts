@@ -1,4 +1,5 @@
 import {api} from "../config/api"
+import {ClosedMatchFilter} from "../models/ClosedMatchFilter"
 
 export type StartMatchObject =
 {
@@ -75,9 +76,13 @@ export async function getActiveMatch()
 }
 
 
-export async function getClosed():Promise<MatchClosed[]>
+export async function getClosed(filter:ClosedMatchFilter):Promise<MatchClosed[]>
 {
-    const response = await api.get<MatchClosed[]>("/match/closed");
+    console.log("PEPE",filter);
+
+    const response = await api.get<MatchClosed[]>("/match/closed", {
+        params: filter
+    });
     return response.data;
 }
 
