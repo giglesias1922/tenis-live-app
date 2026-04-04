@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ImageBackground , StyleSheet } from "react-native";
 import { NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {Button,Surface,ActivityIndicator, Text} from "react-native-paper"
@@ -8,6 +8,8 @@ import * as matchService from "../services/matchService";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {getErrorMessage} from "../helpers/ErrorHelper"
+import { useFocusEffect } from '@react-navigation/native';
+import CurrentMatch from "../screens/MatchScreens/CurrentMatch"
 
 type HomeNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -40,19 +42,31 @@ export default function HomeScreen() {
     }
   }
 
-  useEffect(() => {       
+  useFocusEffect(
+    useCallback(() => {
       load();
-  }, [])
+    }, [])
+  );
 
-  useEffect(() => {
-    if( data && !loading)
-      navigation.replace("CurrentMatch", { match: data });
-  }, [data,loading])
+  // useEffect(() => {
+  //   if( data && !loading)
+  //     navigation.replace("CurrentMatch", { match: data });
+  // }, [data,loading])
   
+
   
   const onStartMatch = () => {
     navigation.navigate("NewMatch");
   };
+
+  if( data && !loading)
+  {
+    return (<CurrentMatch 
+        match={data} 
+        onFinish={() => setData(null)} />)
+  }
+
+  
 
   if(loading)
   {

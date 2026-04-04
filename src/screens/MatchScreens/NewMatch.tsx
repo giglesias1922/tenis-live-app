@@ -72,7 +72,10 @@ export default function NewMatchScreen({ navigation }: Props) {
 
       await matchService.startMatch(mapFormToStartMatch(data));
 
-      navigation.navigate("Home");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
     }
     catch(error)
     {

@@ -2,6 +2,19 @@
   "expo": {
     "name": "tenis-live-app",
     "slug": "tenis-live-app",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "1ec1879c-4e0e-46ae-b466-4d662b24b97b"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/1ec1879c-4e0e-46ae-b466-4d662b24b97b"
+    },
+    "android": {},
+    "ios": {}
   }
 }

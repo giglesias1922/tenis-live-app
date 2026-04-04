@@ -2,22 +2,22 @@ import React,{useEffect} from "react";
 import { useState } from "react";
 import { TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
 import {Surface} from "react-native-paper"
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/AppNavigator";
 import CloseSetModal from "../MatchScreens/CloseSetModal";
 import * as setService from "../../services/setService";
 import MatchActions from "../../screens/MatchScreens/MatchActions";
 import MatchHeader from "../../screens/MatchScreens/MatchHeader";
-import axios, { AxiosError } from "axios";
 import * as errorHelper from "../../helpers/ErrorHelper"
+import * as matchService from "../../services/matchService"
+import { useNavigation } from "@react-navigation/native";
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  "CurrentMatch"  
->;
+type Props = {
+  match: matchService.Match;
+  onFinish:()=>void;
+};
 
-export default function CurrentMatch({ navigation, route }: Props) {
-    const [currentMatch, setCurrentMatch] = useState(route.params.match);
+export default function CurrentMatch({ match, onFinish }: Props) {
+  const navigation = useNavigation<any>();
+    const [currentMatch, setCurrentMatch] = useState<matchService.Match>(match);
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string|null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -36,14 +36,18 @@ export default function CurrentMatch({ navigation, route }: Props) {
         playerGames:myGames,
         opponentGames:opponentGames
       }
+
+      console.log("data",data);
       const response = await setService.closeSet(data)
 
+      
+      console.log(response.data);
       const result = response.data;
 
     if (result.matchFinished) {
       Alert.alert("Partido finalizado");
       
-      navigation.replace("Home");
+      onFinish();
       return;
     }
 
@@ -63,15 +67,6 @@ export default function CurrentMatch({ navigation, route }: Props) {
     setIsLoading(false);
   }
     };
-      
-
-      
-    const goHome = () => {
-        navigation.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-        });
-    };
 
     
 
@@ -79,7 +74,7 @@ export default function CurrentMatch({ navigation, route }: Props) {
     return (
         <Surface style={{ flex: 1 }}>
         <Text>No hay ningún match activo</Text>
-        <TouchableOpacity onPress={goHome} style={styles.retryButton}>
+        <TouchableOpacity onPress={onFinish} style={styles.retryButton}>
           <Text style={{ color: "white" }}>Volver</Text>
         </TouchableOpacity>
       </Surface>
@@ -90,7 +85,7 @@ export default function CurrentMatch({ navigation, route }: Props) {
     return (
     <Surface style={{ flex: 1 }}>
         <Text>El match no tiene un set activo</Text>
-        <TouchableOpacity onPress={goHome} style={styles.retryButton}>
+        <TouchableOpacity onPress={onFinish} style={styles.retryButton}>
           <Text style={{ color: "white" }}>Volver</Text>
         </TouchableOpacity>
       </Surface>
